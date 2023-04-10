@@ -148,12 +148,14 @@ function NetworkGraph() {
   const outputInitdij = () => {
     output = [];
     let tempStr = "";
+    output.push("D(v): current estimate of cost of least-cost-path from source to destination v");
+    output.push("p(v): predecessor node along path from source to v");
     const nodeIds = nodeList.map((node) => node.id);
-    tempStr = tempStr + "Step \t\t N'\t\t"
+    tempStr = tempStr + "Step".toString().padEnd(20) +  "N'".toString().padEnd(20)
      for (let i in nodeIds) {
       const nodeId = nodeIds[i];
       if (nodeId != start){
-      tempStr = tempStr + `D(${nodeId})p(${nodeId})\t\t`;}
+      tempStr = tempStr + (`D(${nodeId})p(${nodeId})`).toString().padEnd(20);}
       
      }
      output.push(tempStr);
@@ -170,28 +172,29 @@ function NetworkGraph() {
   }
 
   const outputFormater = (distances, visisted, dijEdges, counter) => {
-    let tempStr = `${counter}\t\t`;
+    let tempStr = (`${counter}`).toString().padEnd(20);
     const nodeIds = nodeList.map((node) => node.id);
-    const visit = Object.keys(visisted); 
+    const visit = Object.keys(visisted);
+    let tempN = "";
     for (let i in visit){
-      tempStr = tempStr + visit[i];
+      tempN = tempN + visit[i];
     }
-    tempStr += "\t\t"
+    tempStr += tempN.toString().padEnd(20)
     for (let i in nodeIds) {
       const nodeId = nodeIds[i];
       if (!visit.includes(nodeId)) {
         if (distances[nodeId] === Infinity ){
-          tempStr = tempStr + "Inf\t\t\t";
+          tempStr = tempStr + "Inf".toString().padEnd(20);
           
         }
         else{
           if (dijEdges.hasOwnProperty(nodeId)){
-            tempStr = tempStr + dijEdges[nodeId]["node"] + ","+ calcWeight(dijEdges, dijEdges[nodeId]) + "\t\t\t";
+            tempStr = tempStr + (dijEdges[nodeId]["node"] + ","+ calcWeight(dijEdges, dijEdges[nodeId])).toString().padEnd(20);
           }
         }
       }
       else if (nodeId != start){
-        tempStr += "\t\t\t";
+        tempStr += "".toString().padEnd(20);
       }
   }
     output.push(tempStr);
@@ -310,13 +313,36 @@ function NetworkGraph() {
     }
   };
 
+  const bellOutputInit = (dist) => {
+    output = [];
+    let tempStr = "";
+    output.push("D(v): current estimate of cost of least-cost-path from source to destination v");
+    output.push("p(v): predecessor node along path from source to v");
+    const nodeIds = nodeList.map((node) => node.id);
+    tempStr = tempStr + "Step".toString().padEnd(20);
+     for (let i in dist) {
+      if (i != start){
+      tempStr = tempStr + (`D(${i})p(${i})`).toString().padEnd(20);}
+      
+     }
+     output.push(tempStr);
+  }
 
   const outputAppendBell = (dist, prev, counter) => {
-    output.push("Step: " + counter);
-    let tempStr = "";
-    for (let i in dist){
-      tempStr += (i + ": " + dist[i] + "," +  (prev[i] !== null ? prev[i] : "N/A")).toString().padEnd(20);
+    // let tempStr = "";
+    // tempStr += ("Step " + counter).toString().padEnd(20);
+    // for (let i in dist){
+    //   tempStr += (i + ": " + dist[i] + "," +  (prev[i] !== null ? prev[i] : "N/A")).toString().padEnd(20);
      
+    // }
+    // output.push(tempStr);
+
+    let tempStr = "";
+    tempStr += (counter).toString().padEnd(20);
+    for (let i in dist){
+      if (i != start){
+        tempStr += ((dist[i] !== Infinity ? dist[i] : "Inf") +  (prev[i] !== null ? "," + prev[i] : "")).toString().padEnd(20);
+      }
     }
     output.push(tempStr);
     return counter+=1;
@@ -328,7 +354,7 @@ function NetworkGraph() {
     const nodeIds = nodeList.map((node) => node.id);
     const bestEdge = {};
     let counter = 0;
-  
+    
     // Initialize all distances to Infinity and prevNodes to null
     for (let i in nodeIds) {
       const nodeId = nodeIds[i];
@@ -338,7 +364,7 @@ function NetworkGraph() {
   
     // Set distance of start node to 0
     distances[start] = 0;
-
+    bellOutputInit(distances);
     counter = outputAppendBell(distances, prevNodes, counter);
     
     // Relax edges |V|-1 times
@@ -441,9 +467,9 @@ function NetworkGraph() {
       <button onClick={addNode}>Add Node</button>
       <button onClick={addEdge}>Add Edge</button>
       <button onClick={deleteEdge}>Delete Edge</button>
-      <button onClick={loadDefaultGraph}>Default</button>
+      <button onClick={loadDefaultGraph}>Default Graph</button>
       <button onClick={drawGraph}>Draw Graph</button>
-      <button onClick={startVertex}>Choose Initial Vertex</button>
+      <button onClick={startVertex} style={{ marginLeft: '25%' }}>Choose Initial Vertex</button>
       <button onClick={dijkstraCaller}>Dijkstra</button>
       <button onClick={bellmanCaller}>DV: Bellman-Ford</button>
       <div style={{display: "flex"}}>
