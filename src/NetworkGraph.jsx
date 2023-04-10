@@ -310,13 +310,15 @@ function NetworkGraph() {
     }
   };
 
-  const outputAppendBell = (dist, counter) => {
-    console.log(dist);
+
+  const outputAppendBell = (dist, prev, counter) => {
     output.push("Step: " + counter);
-    output.push(JSON.stringify(dist));
-    // for (const key in dist) {
-    //   output.push(`${key}: ${dist[key]}`);
-    // }
+    let tempStr = "";
+    for (let i in dist){
+      tempStr += (i + ": " + dist[i] + "," +  (prev[i] !== null ? prev[i] : "N/A")).toString().padEnd(20);
+     
+    }
+    output.push(tempStr);
     return counter+=1;
   }
 
@@ -336,8 +338,8 @@ function NetworkGraph() {
   
     // Set distance of start node to 0
     distances[start] = 0;
-  
-    counter = outputAppendBell(distances, counter);
+
+    counter = outputAppendBell(distances, prevNodes, counter);
     
     // Relax edges |V|-1 times
     for (let i = 0; i < nodeIds.length - 1; i++) {
@@ -365,8 +367,8 @@ function NetworkGraph() {
             prevNodes[toNode] = fromNode;
           }
     }
-
-    counter = outputAppendBell(distances, counter);
+    counter = outputAppendBell(distances, prevNodes, counter);
+    
   }
   
     // Check for negative-weight cycles
@@ -376,7 +378,6 @@ function NetworkGraph() {
       const weight = Number(edgeList[i].label);
   
       if (isFinite(distances[toNode]) && distances[fromNode] + weight < distances[toNode]) {
-        console.log(distances[fromNode] + weight, distances[toNode]);
         throw new Error("Negative-weight cycle detected");
       }
     }
