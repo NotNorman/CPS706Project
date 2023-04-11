@@ -9,6 +9,7 @@ function NetworkGraph() {
   const [start, setStart] = useState([]);
   let output = [];
   const [stringArray, setStringArray] = useState([]);
+  const [graphAnimate, setGraphAnimate] = useState([]);
 
   const stringDisplay = () => {
     setStringArray(output);
@@ -211,15 +212,19 @@ function NetworkGraph() {
     }
   }
 
+  const stopAnimation = () => {
+    document.getElementById("visualizeAlgo").innerHTML = "";
+  };
+
   const bellmanCaller = () => {
-    if (nodeList.some(node => node.id === start)) {
+    if (nodeList.some((node) => node.id === start)) {
       bellmanFord();
-    }
-    else{
+    } else {
       const container = document.getElementById("algorithmGraph");
       container.innerHTML = "<p>Error: Please Select Initial Vertex</p>";
     }
-  }
+  };
+
   const dijkstra = () =>{
   
     const graph = getNodeEdges(nodeList, edgeList);
@@ -300,7 +305,68 @@ function NetworkGraph() {
     const network = new Network(container, data, options);
     network.body.nodes[start].setOptions({ color: { background: "red" } });
     setNetwork(network);
+    setGraphAnimate(arr);
   }
+  
+  const addEdges = () => {
+    console.log(graphAnimate);
+    console.log("yo");
+    const container = document.getElementById("visualizeAlgo");
+    const options = {
+      edges: {
+        labelHighlightBold: false,
+        font: { size: 20, color: "#000000" },
+      },
+      nodes: {
+        font: { size: 20, color: "#000000" },
+      },
+      layout: {
+        hierarchical: false,
+        randomSeed: 2,
+      },
+      physics: {
+        enabled: true,
+        barnesHut: {
+          gravitationalConstant: -1000,
+          springLength: 100,
+          springConstant: 0.00,
+          avoidOverlap: 0,
+        },
+        maxVelocity: 0,
+        solver: "barnesHut",
+        timestep: 0.5,
+        adaptiveTimestep: true,
+      },
+    };
+  
+    let i = 0;
+    const animationLoop = () => {
+      const edgesToAdd = graphAnimate.slice(0, i + 1);
+      const data = {
+        nodes: nodeList,
+        edges: edgesToAdd,
+      };
+  
+      // Add fixed node positions to options
+      options.layout = {
+        improvedLayout: false,
+        hierarchical: false,
+        randomSeed: 2,
+      };
+  
+      const network = new Network(container, data, options);
+      network.body.nodes[start].setOptions({ color: { background: "red" } });
+      setNetwork(network);
+      i++;
+  
+      if (i < graphAnimate.length) {
+        setTimeout(animationLoop, 1500);
+      }
+    };
+  
+    animationLoop();
+  };
+  
 
   const startVertex = () => {
     const tempStart = prompt("Enter initial node by name:");
@@ -394,7 +460,6 @@ function NetworkGraph() {
           }
     }
     counter = outputAppendBell(distances, prevNodes, counter);
-    
   }
   
     // Check for negative-weight cycles
@@ -485,6 +550,9 @@ function NetworkGraph() {
       <div id="output">{stringArray.map((string, index) => (
           <pre key={index}>{string}</pre>
         ))}</div>
+        <button onClick={addEdges}>Animate Dijkstra</button>
+        <button onClick={stopAnimation}>Clear</button>
+      <div id="visualizeAlgo" style={{ width: "100%", height: "500px" }}></div>
     </div>
   );
 }
