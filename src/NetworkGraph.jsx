@@ -550,7 +550,7 @@ function NetworkGraph() {
       <div id="output">{stringArray.map((string, index) => (
           <pre key={index}>{string}</pre>
         ))}</div>
-        <button onClick={addEdges}>Animate Dijkstra</button>
+        <button onClick={addEdges}>Animate Dijkstra's Greedy Algorithm</button>
         <button onClick={stopAnimation}>Clear</button>
       <div id="visualizeAlgo" style={{ width: "100%", height: "500px" }}></div>
     </div>
