@@ -11,8 +11,8 @@ function NetworkGraph() {
   const [stringArray, setStringArray] = useState([]);
   const [graphAnimate, setGraphAnimate] = useState([]);
 
-  const stringDisplay = () => {
-    setStringArray(output);
+  const stringDisplay = (edge) => {
+    setStringArray([...output, ...printShortestPaths(edge)]);
   }
 
   const addNode = () => {
@@ -28,35 +28,40 @@ function NetworkGraph() {
   };
 
 
-  const addEdge = () => {
-    const fromNode = prompt("Enter starting node for edge:");
-    const toNode = prompt("Enter ending node for edge:");
-    const weight = prompt("Enter edge weight:");
-  
-    // check if both fromNode and toNode exist in nodeList
-    const fromNodeExists = nodeList.some((node) => node.id === fromNode);
-    const toNodeExists = nodeList.some((node) => node.id === toNode);
-  
-    if (fromNodeExists && toNodeExists && weight) {
-      // check if an edge already exists between the given nodes
-      const edgeExists = edgeList.some(
-        (edge) => edge.from === fromNode && edge.to === toNode
-      );
-  
-      if (!edgeExists) {
-        setEdgeList((prevList) => [
-          ...prevList,
-          { from: fromNode, to: toNode, label: weight },
-        ]);
-      } else {
-        // edge already exists, show an error message or handle the case in some way
-        alert("Edge already exists between the given nodes.");
-      }
+const addEdge = () => {
+  const fromNode = prompt("Enter starting node for edge:");
+  const toNode = prompt("Enter ending node for edge:");
+  const weight = prompt("Enter edge weight:");
+
+  // check if both fromNode and toNode exist in nodeList
+  const fromNodeExists = nodeList.some((node) => node.id === fromNode);
+  const toNodeExists = nodeList.some((node) => node.id === toNode);
+
+  if (fromNodeExists && toNodeExists && weight) {
+    // check if an edge already exists between the given nodes
+    const edgeExists = edgeList.some(
+      (edge) => edge.from === fromNode && edge.to === toNode
+    );
+
+    // check if an edge already exists between the nodes in the opposite direction
+    const oppositeEdgeExists = edgeList.some(
+      (edge) => edge.from === toNode && edge.to === fromNode
+    );
+
+    if (!edgeExists && !oppositeEdgeExists) {
+      setEdgeList((prevList) => [
+        ...prevList,
+        { from: fromNode, to: toNode, label: weight },
+      ]);
     } else {
-      // either fromNode or toNode does not exist in the nodeList, show an error message or handle the case in some way
-      alert("One or both of the nodes do not exist.");
+      // edge already exists, show an error message or handle the case in some way
+      alert("Edge already exists between the given nodes.");
     }
-  };
+  } else {
+    // either fromNode or toNode does not exist in the nodeList, show an error message or handle the case in some way
+    alert("One or both of the nodes do not exist.");
+  }
+};
 
   const deleteEdge = () => {
     const fromNode = prompt("Enter starting node for edge:");
@@ -234,6 +239,7 @@ function NetworkGraph() {
     const dijEdges = {};
     let unvisited = Object.keys(graph);
     let arr = [];
+    const bestEdge = {};
 
     unvisited.forEach((node) => {
       distances[node] = Infinity;
@@ -279,15 +285,17 @@ function NetworkGraph() {
         }
       });
       if (dijEdges.hasOwnProperty(curLeastDistance)){
+        
+        bestEdge[curLeastDistance] = { from: dijEdges[curLeastDistance].node, to: curLeastDistance, label: String(dijEdges[curLeastDistance].weight) };
         arr.push({ from: curLeastDistance, to: dijEdges[curLeastDistance].node, label: dijEdges[curLeastDistance].weight })
       }
     }
     
     output.map((str) => console.log(str));
-    stringDisplay();
+    stringDisplay(bestEdge);
     const data = {
       nodes: nodeList,
-      edges: arr,
+      edges: Object.values(bestEdge),
     };
     const options = {
       edges: {
@@ -395,14 +403,6 @@ function NetworkGraph() {
   }
 
   const outputAppendBell = (dist, prev, counter) => {
-    // let tempStr = "";
-    // tempStr += ("Step " + counter).toString().padEnd(20);
-    // for (let i in dist){
-    //   tempStr += (i + ": " + dist[i] + "," +  (prev[i] !== null ? prev[i] : "N/A")).toString().padEnd(20);
-     
-    // }
-    // output.push(tempStr);
-
     let tempStr = "";
     tempStr += (counter).toString().padEnd(20);
     for (let i in dist){
@@ -490,7 +490,32 @@ function NetworkGraph() {
     };
     const container = document.getElementById("algorithmGraph");
     networkConstruct(container, data, options);
-    stringDisplay();
+    stringDisplay(bestEdge);
+  };
+
+  const printShortestPaths = (bestEdge) => {
+    let temp = [];
+    const nodes = Object.keys(bestEdge);
+  
+    for (const node of nodes) {
+      if (node !== start) {
+        let currentNode = node;
+        let path = "";
+        let totalCost = 0;
+  
+        while (currentNode !== start) {
+          const { from, to, label } = bestEdge[currentNode];
+          path = `${from}${path ? `-${path}` : ""}`;
+          totalCost += parseInt(label);
+          currentNode = from;
+        }
+  
+        const str = `Shortest path from ${start} to ${node}: ${path}-${node} Cost=${totalCost}`;
+        temp.push(str);
+      }
+    }
+  
+    return temp;
   };
 
   const networkConstruct = (container, data, options) => {
