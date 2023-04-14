@@ -1,0 +1,96 @@
+* {
+    --border: white;
+    --primary: white;
+    --background: green;
+    --text: white;
+    --text-dark: black;
+}
+
+body {
+    background: var(--background);
+}
+
+p {
+    font-family: 'Raleway', 'Arial', sans-serif;
+    color: var(--text);
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+pre {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--text);
+}
+
+.vis-network {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    box-shadow: rgba(0, 0, 0, 0.5) 0px -2px 10px;
+    margin-top: 10px;
+}
+
+button {
+    margin: 2px;
+    font-family: 'Raleway', 'Arial', sans-serif;
+    background: transparent;
+    border-color: var(--border);
+    color: var(--primary);
+    border-style: solid;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-style: none;
+    border-right-style: none;
+    position: relative;
+    transition: color 0.2s ease;
+    vertical-align: bottom;
+    text-align: center;
+    padding: 5px 10px 5px 10px;
+    top: 2px;
+    cursor: pointer;
+}
+
+button:hover {
+    color: var(--text-dark);
+}
+
+button::before {
+    background-color: var(--primary);
+    width: 0;
+    height: 100%;
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 50%;
+    transition: 0.2s all;
+    z-index: -1;
+}
+
+button:hover::before {
+    width: 100%;
+    left: 0;
+    right: 0;
+}
+
+.row {
+    background-color: var(--background-transparent);
+    border-radius: 10px;
+    display: -webkit-flex;
+    display: flex;
+    box-shadow: var(--shadow);
+}
+
+.column {
+    -ms-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.5) 0px -2px 10px;
+    margin: 5px;
+}

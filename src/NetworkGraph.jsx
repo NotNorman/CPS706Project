@@ -554,30 +554,43 @@ const addEdge = () => {
 
   return (
     <div>
-      <button onClick={addNode}>Add Node</button>
-      <button onClick={addEdge}>Add Edge</button>
-      <button onClick={deleteEdge}>Delete Edge</button>
-      <button onClick={loadDefaultGraph}>Default Graph</button>
-      <button onClick={drawGraph}>Draw Graph</button>
-      <button onClick={startVertex} style={{ marginLeft: '25%' }}>Choose Initial Vertex</button>
-      <button onClick={dijkstraCaller}>Dijkstra</button>
-      <button onClick={bellmanCaller}>DV: Bellman-Ford</button>
-      <div style={{display: "flex"}}>
-      <div style={{ width: "50%" }}>
-        <p>Original graph:</p>
-        <div id="network" style={{ width: "100%", height: "500px" }}></div>
+      <div className="row">
+        <div className="column">
+          <button onClick={addNode}>Add Node</button>
+          <button onClick={addEdge}>Add Edge</button>
+          <button onClick={deleteEdge}>Delete Edge</button>
+          <button onClick={loadDefaultGraph}>Default Graph</button>
+          <button onClick={drawGraph}>Draw Graph</button>
+          <div>
+            <p>Original graph:</p>
+            <div id="network" style={{ width: "100%", height: "500px" }}></div>
+          </div>
+        </div>
+        <div className="column">
+          <button onClick={startVertex}>Choose Initial Vertex</button>
+          <button onClick={dijkstraCaller}>Dijkstra</button>
+          <button onClick={bellmanCaller}>DV: Bellman-Ford</button>
+          <div>
+            <p>Algorithm Applied:</p>
+            <div id="algorithmGraph" style={{ width: "100%", height: "500px" }}></div>
+          </div>
+        </div>
       </div>
-      <div style={{ width: "50%" }}>
-        <p>Algorithm Applied:</p>
-        <div id="algorithmGraph" style={{ width: "100%", height: "500px" }}></div>
+      <div className="row">
+        <div className="column">
+          <div id="output">{stringArray.map((string, index) => (
+            <pre key={index}>{string}</pre>
+          ))}</div>
+        </div>
+        <div className="column">
+          <button onClick={addEdges}>Animate Dijkstra's Greedy Algorithm</button>
+          <button onClick={stopAnimation}>Clear</button>
+          <div id="visualizeAlgo" style={{ width: "100%", height: "500px" }}></div>
+        </div>
       </div>
-    </div>
-      <div id="output">{stringArray.map((string, index) => (
-          <pre key={index}>{string}</pre>
-        ))}</div>
-        <button onClick={addEdges}>Animate Dijkstra's Greedy Algorithm</button>
-        <button onClick={stopAnimation}>Clear</button>
-      <div id="visualizeAlgo" style={{ width: "100%", height: "500px" }}></div>
+      <div className="row">
+        
+      </div>
     </div>
   );
 }
