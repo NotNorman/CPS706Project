@@ -1,9 +1,9 @@
 * {
-    --border: white;
-    --primary: white;
-    --background: green;
-    --text: white;
-    --text-dark: black;
+    --border: black;
+    --primary: black;
+    --background: white;
+    --text: black;
+    --text-dark: white;
 }
 
 body {
